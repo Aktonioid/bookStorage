@@ -33,41 +33,65 @@ public class BookController
     @GetMapping("/{id}")
     public ResponseEntity<BookModelDto> GetEntityById(@PathVariable("id")UUID id) 
     {
-        return ResponseEntity.ok(bookService.GetEntitieById(id));
+        BookModelDto dto = bookService.GetEntitieById(id); //результат получениый при поиске по id
+
+        if(dto == null) // елси книги с таким id нет, то кидаем 404
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/")
     public ResponseEntity<ArrayList<BookModelDto>> GetAllEntities() 
     {
-        return ResponseEntity.ok(bookService.GetAllEntities());
+        return ResponseEntity.ok(bookService.GetAllEntities()); // получаем все сущности из типа книга из бд
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> CreateEntity(@RequestPart("book") BookModelDto model,
-                                             @RequestPart(name = "file", required = false) MultipartFile file) 
+    public ResponseEntity<String> CreateEntity(@RequestPart(name = "book", required = true) BookModelDto model,
+                                             @RequestPart(name = "cover", required = false) MultipartFile file) 
     {
-        // если файл пришел, то мы сохраняем его и запихиваем его урл в сохраняемую модель
-        if(!file.isEmpty())
+        // проверка на то имеются ли в книге самые необходимые параметры
+        if(model.getAuthorName() == null || // Есть ли автор
+        model.getIsbn() == null|| // есть ли isbn
+        model.getPrice() == 0|| // етсь ли цена
+        model.getBookName() == null // есть ли название книги
+        )
         {
-            model.setPictureUrl(bookService.SaveBookCover(file));
+            return ResponseEntity.badRequest().body("Не полное тело запроса");
         }
 
-        if(!bookService.CreateEntity(model)) return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);// если при сохранении ошибка
+        // если файл пришел, то мы сохраняем его и запихиваем его урл в сохраняемую модель
+        if(file != null)
+        {
+            String path = bookService.SaveBookCover(file); //путь куда сохранена книга
+            model.setPictureUrl(path); // ставим этот путь в книгу
+        }
+
+        if(!bookService.CreateEntity(model)) return new ResponseEntity<>(HttpStatus.INSUFFICIENT_STORAGE);// если при сохранении ошибка
 
         return ResponseEntity.ok("Book model created");
     }
 
     @PutMapping("/update")
-    public ResponseEntity<String> UpdateEntity(@RequestPart("book") BookModelDto model,
-                                             @RequestPart(name = "file", required = false) MultipartFile file) 
+    public ResponseEntity<String> UpdateEntity(@RequestPart(name = "book", required = true) BookModelDto model,
+                                             @RequestPart(name = "cover", required = false) MultipartFile file) 
     {
         // если файл пришел, то мы сохраняем его и запихиваем его урл в сохраняемую модель
-        if(!file.isEmpty())
+        if(file != null)
         {
-            model.setPictureUrl(bookService.SaveBookCover(file));
+            String path = bookService.SaveBookCover(file);// путь куда сохраняется обложка книги
+            model.setPictureUrl(path); // устанавливаем этот путь в обновляемую модель
         }
 
-        if(!bookService.UpdateEntity(model)) return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);//если при соохранении ошибка
+        if(bookService.GetEntitieById(model.getId()) == null) // проверка на то что такая модель существует в бд 
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Если нет, то кидаем ответ не найдено
+        }
+
+        if(!bookService.UpdateEntity(model)) return new ResponseEntity<>(HttpStatus.INSUFFICIENT_STORAGE);//если при соохранении ошибка
         
         return ResponseEntity.ok("Book model updated");
     }
@@ -75,9 +99,18 @@ public class BookController
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> DeleteEntityById(@PathVariable("id") UUID id) 
     {
-        if(!bookService.DeleteEntityById(id)) return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);//если при соохранении ошибка
+        if(bookService.GetEntitieById(id) == null) // проверка на сущестрование такой записи
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // такой записи в бд нет
+        }
+
+        if(!bookService.DeleteEntityById(id)) return new ResponseEntity<>(HttpStatus.INSUFFICIENT_STORAGE);//если при соохранении ошибка
         return ResponseEntity.ok("Book model deleted");
     }
 
-
+    @GetMapping("/genre/{genre_id}")
+    public ResponseEntity<ArrayList<BookModelDto>> GetBookByGenreId(@PathVariable("genre_id") UUID id)
+    {
+        return ResponseEntity.ok(bookService.GetBooksByGenre(id));
+    }
 }

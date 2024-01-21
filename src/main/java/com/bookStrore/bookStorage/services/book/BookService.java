@@ -16,12 +16,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.bookStrore.bookStorage.dao.IBaseDao;
+import com.bookStrore.bookStorage.dao.sqlDao.BookModelDao;
 import com.bookStrore.bookStorage.dto.mappers.BookModelMapper;
 import com.bookStrore.bookStorage.dto.models.BookModelDto;
-import com.bookStrore.bookStorage.excpetions.OverloadRequiredException;
+import com.bookStrore.bookStorage.dto.models.GenreModelDto;
 import com.bookStrore.bookStorage.excpetions.StorageException;
 import com.bookStrore.bookStorage.models.BookModel;
+import com.bookStrore.bookStorage.models.GenreModel;
 import com.bookStrore.bookStorage.services.IServiceBase;
 
 @Service
@@ -30,7 +31,7 @@ public class BookService implements IServiceBase<BookModelDto>
 {
 
     @Autowired
-    private IBaseDao<BookModel> bookModelDao;
+    private BookModelDao bookModelDao;
     @Autowired
     private Environment env;
 
@@ -39,14 +40,8 @@ public class BookService implements IServiceBase<BookModelDto>
     public ArrayList<BookModelDto> GetAllEntities() 
     {
         ArrayList<BookModelDto> dtos = null;
-        try 
-        {
-            dtos = new ArrayList<>(
-                bookModelDao.GetAllEntities().stream().map(BookModelMapper::AsDto).collect(Collectors.toList()));
-        } 
-        catch (OverloadRequiredException e) {
-            e.printStackTrace();
-        } 
+        dtos = new ArrayList<>(
+            bookModelDao.GetAllEntities().stream().map(BookModelMapper::AsDto).collect(Collectors.toList()));
 
         return dtos;
     }
@@ -54,7 +49,14 @@ public class BookService implements IServiceBase<BookModelDto>
     @Override
     public BookModelDto GetEntitieById(UUID id) 
     {
-        return BookModelMapper.AsDto(bookModelDao.GetEntityById(id));
+        BookModel book = bookModelDao.GetEntityById(id);
+
+        if(book == null)
+        {
+            return null;
+        }
+
+        return BookModelMapper.AsDto(book);
     }
 
     @Override
@@ -112,5 +114,26 @@ public class BookService implements IServiceBase<BookModelDto>
         }
 
         return destinationPath.toString();
+    }
+
+    public ArrayList<BookModelDto> GetBooksByGenre(UUID genreId)
+    {
+        GenreModel genre = new GenreModel(genreId);
+        
+        return new ArrayList<BookModelDto>(bookModelDao.GetBooksByGenre(genre).stream().map(BookModelMapper::AsDto).collect(Collectors.toList()));
+    }
+
+    public boolean DeleteGenresFromBooks(ArrayList<BookModelDto> dtos, UUID genreID)
+    {
+        for (BookModelDto bookModelDto : dtos) 
+        {
+            bookModelDto.setGenres(new ArrayList<GenreModelDto>(bookModelDto.getGenres().stream()
+                                                                .filter(x -> (!x.getId().equals(genreID)))
+                                                                .collect(Collectors.toList())));;
+        }
+
+        return bookModelDao.DeleteGenresFromBooks(new ArrayList<BookModel>(
+            dtos.stream().map(BookModelMapper::AsEntity).collect(Collectors.toList())
+        ));
     }
 }

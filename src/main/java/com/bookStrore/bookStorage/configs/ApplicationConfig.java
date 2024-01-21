@@ -1,4 +1,4 @@
-package configs;
+package com.bookStrore.bookStorage.configs;
 
 import java.util.Properties;
 
@@ -33,14 +33,13 @@ public class ApplicationConfig
     {
         
         BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName(environment.getRequiredProperty("jdbc.driverClassName"));        // dataSource.setUrl(environment.getRequiredProperty("hibernate.connection.url"));
+        dataSource.setDriverClassName(environment.getRequiredProperty("jdbc.driverClassName"));
         dataSource.setUrl(environment.getRequiredProperty("jdbc.url"));
         dataSource.setPassword(environment.getRequiredProperty("jdbc.password"));
         dataSource.setUsername(environment.getRequiredProperty("jdbc.username"));
 
         return dataSource;
     }
-
     
     private Properties hibernateProperties()
     {
@@ -50,7 +49,8 @@ public class ApplicationConfig
         properties.put("hibernate.show_sql", environment.getRequiredProperty("hibernate.show_sql"));
         properties.put("hibernate.format_sql", environment.getRequiredProperty("hibernate.format_sql"));
         properties.put("hibernate.highlight_sql", environment.getRequiredProperty("hibernate.highlight_sql"));
-        properties.put(org.hibernate.cfg.Environment.HBM2DDL_AUTO, environment.getRequiredProperty("hibernate.hbm2ddl.auto"));
+        properties.put("hibernate.hbm2ddl.auto", environment.getRequiredProperty("hibernate.hbm2ddl.auto"));
+        properties.put("logging.level.org.hibernate.SQL", environment.getRequiredProperty("logging.level.org.hibernate.SQL"));
 
         return properties;
     }

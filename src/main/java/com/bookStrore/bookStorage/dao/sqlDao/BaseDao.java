@@ -7,9 +7,15 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.query.MutationQuery;
+import org.hibernate.query.Query;
 
 import com.bookStrore.bookStorage.dao.IBaseDao;
-import com.bookStrore.bookStorage.excpetions.OverloadRequiredException;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaDelete;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 
 public class BaseDao<T> implements IBaseDao<T>
 {
@@ -23,21 +29,35 @@ public class BaseDao<T> implements IBaseDao<T>
     }
     
     @Override
-    public ArrayList<T> GetAllEntities() throws OverloadRequiredException
+    public ArrayList<T> GetAllEntities()
     {
-        throw new OverloadRequiredException("GetAllEntities");
+        Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<T> cq = cb.createQuery(clazz);
+        Root<T> root = cq.from(clazz);
+
+        cq.select(root); // получаем все записи из бд
+        Query<T> query = session.createQuery(cq);
+        
+        return new ArrayList<T>(query.list());
     }
 
     @Override
     public T GetEntityById(UUID id) // получаем модель по id
     {
+
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = session.getTransaction();
-        transaction.begin();
+     
+        // создание запроса в бд
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<T> cq = cb.createQuery(clazz);
+        Root<T> root = cq.from(clazz);
 
-        T entity = session.get(clazz, id);
+        cq.select(root).where(root.get("id").in(id)); // ишем по id в бд
+        Query<T> query = session.createQuery(cq); 
 
-        transaction.commit();
+        T entity = query.uniqueResult();
+
         return entity;
     }
 
@@ -46,7 +66,8 @@ public class BaseDao<T> implements IBaseDao<T>
     {
         Session session = sessionFactory.getCurrentSession();
         Transaction transaction = session.getTransaction();
-        boolean isCreated = false;
+
+        boolean isCreated = false;// переменная необходимая для записи состояния сохранния данных в бд
 
         try
         {
@@ -113,11 +134,18 @@ public class BaseDao<T> implements IBaseDao<T>
         
         try
         {
-            Object deletableModel;
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaDelete<T> cd = cb.createCriteriaDelete(clazz); //запрос для удаления
+            Root<T> root = cd.from(clazz);
+
+            cd.where(cb.equal(root.get("id"), id));// удалить запись, в которой id равняется заданному
+
             transaction.begin();   
-            //по идее можно сделать так, чтоб сразу приходила модель, которую наду удалить
-            deletableModel = session.get(clazz, id);// находим в бд модель
-            session.remove(deletableModel);// удаляем из бд модель
+
+            MutationQuery query = session.createMutationQuery(cd); // создаем запрос в бд для того чтобы удалить записть по id 
+            
+            query.executeUpdate(); // Посылаем запрос на удаление
+
             transaction.commit();
             isDeleted = true;
         }
