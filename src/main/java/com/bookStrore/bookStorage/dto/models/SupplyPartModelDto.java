@@ -16,5 +16,5 @@ public class SupplyPartModelDto
     private UUID id; // id
     private BookModelDto book; // модель поставляемой книги
     private UUID supplyId; // id содели поставки по которой будут получаться данные из бд
-    private short bookCount; //Сколько книг в поставке 
+    private int bookCount; //Сколько книг в поставке 
 }

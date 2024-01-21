@@ -43,7 +43,14 @@ public class GenreService implements IServiceBase<GenreModelDto>
     @Override
     public GenreModelDto GetEntitieById(UUID id) 
     {
-        return GenreModelMapper.AsDto(genreModelDao.GetEntityById(id));
+        GenreModel genre = genreModelDao.GetEntityById(id);
+
+        if(genre == null)
+        {
+            return null;
+        }
+
+        return GenreModelMapper.AsDto(genre);
     }
 
     @Override

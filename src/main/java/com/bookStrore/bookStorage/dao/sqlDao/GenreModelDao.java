@@ -1,8 +1,5 @@
 package com.bookStrore.bookStorage.dao.sqlDao;
 
-import java.util.ArrayList;
-
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -21,15 +18,4 @@ public class GenreModelDao extends BaseDao<GenreModel>
     SessionFactory sessionFactory;
     Class<GenreModel> clazz = GenreModel.class;
     
-
-    @Override
-    public ArrayList<GenreModel> GetAllEntities()
-    {
-        String hql = "SELECT g FROM GenreModel g";
-        
-        Session session = sessionFactory.getCurrentSession();
-
-        return new ArrayList<GenreModel>(session.createQuery(hql, clazz).getResultList()); // получаем все жанры
-    }
-
 }

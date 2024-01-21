@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.bookStrore.bookStorage.dto.models.GenreModelDto;
 import com.bookStrore.bookStorage.services.IServiceBase;
+import com.bookStrore.bookStorage.services.book.BookService;
 
 @Controller
 @RequestMapping("/genre")
@@ -24,12 +25,21 @@ public class GenreController implements IController<GenreModelDto>
 {
     @Autowired
     IServiceBase<GenreModelDto> genreService;
+    @Autowired
+    BookService bookService;
 
     @Override
     @GetMapping("/{id}")
     public ResponseEntity<GenreModelDto> GetEntityById(@PathVariable(name = "id")UUID id) 
     {
-        return ResponseEntity.ok(genreService.GetEntitieById(id));
+        GenreModelDto genre = genreService.GetEntitieById(id);
+
+        if(genre == null)
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(genre);
     }
 
     @Override
@@ -41,21 +51,29 @@ public class GenreController implements IController<GenreModelDto>
 
     @Override
     @PostMapping("/create")
-    public ResponseEntity<String> CreateEntity(@RequestBody GenreModelDto model) 
+    public ResponseEntity<String> CreateEntity(@RequestBody(required = true) GenreModelDto model) 
     {
-        boolean isCreated = genreService.CreateEntity(model);
+        if(model.getName() == null) // если не заполнено поле имени жанра
+        {
+            return ResponseEntity.badRequest().body("Прислано что-то не то");
+        }
 
-        if(!isCreated) return new ResponseEntity<String>(HttpStatus.NOT_ACCEPTABLE);
+        if(!genreService.CreateEntity(model)) return new ResponseEntity<String>(HttpStatus.INSUFFICIENT_STORAGE);
 
         return ResponseEntity.ok("Genre was created successfuly");
     }
 
     @Override
     @PutMapping("/update")
-    public ResponseEntity<String> UpdateEntity(GenreModelDto model) 
+    public ResponseEntity<String> UpdateEntity(@RequestBody(required = true) GenreModelDto model) 
     {
-        boolean isUpdated = genreService.UpdateEntity(model);
-        if(!isUpdated) return new ResponseEntity<String>(HttpStatus.NOT_ACCEPTABLE);
+        if(genreService.GetEntitieById(model.getId())  == null)
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+
+        if(!genreService.UpdateEntity(model)) return new ResponseEntity<String>(HttpStatus.INSUFFICIENT_STORAGE);
         return ResponseEntity.ok("Genre was updated successfully");
     }
 
@@ -63,8 +81,20 @@ public class GenreController implements IController<GenreModelDto>
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> DeleteEntityById(@PathVariable("id") UUID id) 
     {
-        boolean isDeleted = genreService.DeleteEntityById(id);
 
+        if(genreService.GetEntitieById(id) == null)
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if(!bookService.DeleteGenresFromBooks( // удаляем из всех книг с этим жанром его упоминание, чтоб можно было удалять
+            bookService.GetBooksByGenre(id), // получаем все книги в которых этот жанр присутствует
+             id)) // id удаляемого жанра
+        {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        boolean isDeleted = genreService.DeleteEntityById(id);// удаляем сам жанр
         if(!isDeleted) return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 
         return ResponseEntity.ok("Genre was successfully deleted");
