@@ -10,7 +10,6 @@ import com.bookStrore.bookStorage.services.genre.GenreService;
 
 @SpringBootTest
 class BookStorageApplicationTests {
-
 	
 	private GenreService service = Mockito.mock();
 
