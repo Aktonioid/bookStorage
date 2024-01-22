@@ -1,4 +1,4 @@
-package configs;
+package com.bookStrore.bookStorage.configs;
 
 import java.util.Arrays;
 

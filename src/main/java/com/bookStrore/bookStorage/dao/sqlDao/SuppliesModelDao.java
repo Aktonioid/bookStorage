@@ -1,6 +1,5 @@
 package com.bookStrore.bookStorage.dao.sqlDao;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 import org.hibernate.HibernateException;
@@ -9,6 +8,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 
+import com.bookStrore.bookStorage.models.BookModel;
 import com.bookStrore.bookStorage.models.SuppliesModel;
 import com.bookStrore.bookStorage.models.SupplyPartModel;
 
@@ -24,15 +24,6 @@ public class SuppliesModelDao extends SQLBaseDao<SuppliesModel>
     SessionFactory sessionFactory;
     Class<SuppliesModel> clazz;    
 
-    @Override
-    public ArrayList<SuppliesModel> GetAllEntities()
-    {
-        String hql = "SELECT s FROM SuppliesModel s"; //query для получения всех данных из SuppliesModel
-        
-        Session session = sessionFactory.getCurrentSession();
-        
-        return new ArrayList<SuppliesModel>(session.createQuery(hql, clazz).getResultList()); // получаем все SuppliesModel
-    }
 
     @Override
     public boolean CreateEntity(SuppliesModel entity) 
@@ -84,5 +75,50 @@ public class SuppliesModelDao extends SQLBaseDao<SuppliesModel>
         return isCreated;
     }
 
+    public boolean SuppliyArrived(SuppliesModel model) // Обработка пришедшей поставки
+    {
+        Session session = sessionFactory.getCurrentSession(); 
+        Transaction transaction = session.getTransaction();
+        
+        boolean isSuccseed = false; //переменна для заптмт результата записи в бд 
+
+        try
+        {
+            transaction.begin();
+            
+            session.merge(model); // обновляем модель поставки в бд
+
+            for (SupplyPartModel book : model.getBooks()) // пробегаемся по всем книгам, что есть в модели поставки и добавляем у их 
+            {
+                BookModel supplyBook = book.getBook();
+                
+                
+                BookModel dbModel = session.get(BookModel.class, supplyBook.getId());
+
+                if(dbModel == null)
+                {
+                    continue;
+                }
+
+                dbModel.setLeftovers((short)(dbModel.getLeftovers() + supplyBook.getLeftovers()));
+
+                session.merge(dbModel);                
+            }
+            transaction.commit();
+            isSuccseed = true;
+        }
+        catch(HibernateException e)
+        {
+            transaction.rollback();
+            e.printStackTrace();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            throw e;
+        }
+
+        return isSuccseed;
+    }
     
 }
