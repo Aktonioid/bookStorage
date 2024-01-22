@@ -37,7 +37,7 @@ public class SuppliesModel
     @Basic
     @Temporal(TemporalType.DATE)
     private Date expectedDeliveryDate;// дата в которую поставка ожидается
-
+    // можно добавить еще реальную дату поставки
     @Column(name = "is_delivery_arrived")
     private boolean isArived;
 
