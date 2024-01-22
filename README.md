@@ -4,26 +4,27 @@
 
 ## Что тербуется для начала раоты api
   Открыть в файл application.properties дописать следующие(Убрать "{}" и написать необходимые данные)
-  код applicaion.properties
-  '{
-    jdbc.url=jdbc:mysql://{url бд}/{имя бд}
-    jdbc.username={Ввести username для доступа к бд }
-    jdbc.password={Ввести пароль от бд}
-    jdbc.driverClassName=com.mysql.cj.jdbc.Driver
-
-    # ?useUnicode=true&characterEncoding=utf-8&useSSL=false
-
-    #Echo all executed sql to console
-    hibernate.dialect=org.hibernate.dialect.MySQLDialect
-    hibernate.show_sql=true 
-    hibernate.format_sql=true
-    hibernate.highlight_sql=true
-    logging.level.org.hibernate.SQL=debug
-
-    #Automatically export the scheme
-    hibernate.hbm2ddl.auto=update
-  }'
-
+  код applicaion.properties:
+  
+  ```
+  {
+  jdbc.url=jdbc:mysql://{url бд}/{имя бд}
+  jdbc.username={Ввести username для доступа к бд }
+  jdbc.password={Ввести пароль от бд}
+  jdbc.driverClassName=com.mysql.cj.jdbc.Driver 
+  
+  #Echo all executed sql to console
+  hibernate.dialect=org.hibernate.dialect.MySQLDialect
+  hibernate.show_sql=true 
+  hibernate.format_sql=true
+  hibernate.highlight_sql=true
+  
+  logging.level.org.hibernate.SQL=debug 
+  #Automatically export the scheme
+  hibernate.hbm2ddl.auto=update
+  }
+  ```
+  
 ### Функционал на данный момент
   1) CURD операции для модели книг, жанров и поставок
   2) Получение книг по заданному жанру
