@@ -4,8 +4,9 @@
 
 ## Что тербуется для начала раоты api
   Открыть в файл application.properties дописать следующие(Убрать "{}" и написать необходимые данные)
+  
   код applicaion.properties
-  '{
+  {
     jdbc.url=jdbc:mysql://{url бд}/{имя бд}
     jdbc.username={Ввести username для доступа к бд }
     jdbc.password={Ввести пароль от бд}
@@ -22,7 +23,7 @@
 
     #Automatically export the scheme
     hibernate.hbm2ddl.auto=update
-  }'
+  }
 
 ### Функционал на данный момент
   1) CURD операции для модели книг, жанров и поставок
