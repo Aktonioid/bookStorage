@@ -11,12 +11,12 @@ import org.hibernate.Transaction;
 import com.bookStrore.bookStorage.dao.IBaseDao;
 import com.bookStrore.bookStorage.excpetions.OverloadRequiredException;
 
-public class BaseDao<T> implements IBaseDao<T>
+public class SQLBaseDao<T> implements IBaseDao<T>
 {
     SessionFactory sessionFactory;
     Class<T> clazz;
 
-    public BaseDao(SessionFactory sessionFactory, Class<T> clazz)
+    public SQLBaseDao(SessionFactory sessionFactory, Class<T> clazz)
     {
         this.clazz = clazz;
         this.sessionFactory = sessionFactory;

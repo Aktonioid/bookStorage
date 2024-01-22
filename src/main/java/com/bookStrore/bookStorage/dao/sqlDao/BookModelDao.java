@@ -10,7 +10,7 @@ import com.bookStrore.bookStorage.excpetions.OverloadRequiredException;
 import com.bookStrore.bookStorage.models.BookModel;
 
 @Repository
-public class BookModelDao extends BaseDao<BookModel>
+public class BookModelDao extends SQLBaseDao<BookModel>
 {
     @Autowired
     public BookModelDao(SessionFactory sessionFactory) {

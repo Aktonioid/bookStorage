@@ -13,7 +13,7 @@ import com.bookStrore.bookStorage.models.SuppliesModel;
 import com.bookStrore.bookStorage.models.SupplyPartModel;
 
 @Repository
-public class SuppliesModelDao extends BaseDao<SuppliesModel>
+public class SuppliesModelDao extends SQLBaseDao<SuppliesModel>
 {   
 
     public SuppliesModelDao(SessionFactory sessionFactory) {

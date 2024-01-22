@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.bookStrore.bookStorage.models.GenreModel;
 
 @Repository
-public class GenreModelDao extends BaseDao<GenreModel>
+public class GenreModelDao extends SQLBaseDao<GenreModel>
 {
     @Autowired
     public GenreModelDao(SessionFactory sessionFactory)
