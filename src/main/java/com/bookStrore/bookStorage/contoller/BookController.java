@@ -49,7 +49,7 @@ public class BookController
         return ResponseEntity.ok(bookService.GetAllEntities()); // получаем все сущности из типа книга из бд
     }
 
-    @PostMapping("/create")
+    @PostMapping("/")
     public ResponseEntity<String> CreateEntity(@RequestPart(name = "book", required = true) BookModelDto model,
                                              @RequestPart(name = "cover", required = false) MultipartFile file) 
     {
@@ -76,7 +76,7 @@ public class BookController
         // return ResponseEntity.ok("Book model created");
     }
 
-    @PutMapping("/update")
+    @PutMapping("/")
     public ResponseEntity<String> UpdateEntity(@RequestPart(name = "book", required = true) BookModelDto model,
                                              @RequestPart(name = "cover", required = false) MultipartFile file) 
     {
@@ -97,7 +97,7 @@ public class BookController
         return ResponseEntity.ok("Book model updated");
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> DeleteEntityById(@PathVariable("id") UUID id) 
     {
         if(bookService.GetEntitieById(id) == null) // проверка на сущестрование такой записи

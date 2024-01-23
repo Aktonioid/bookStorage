@@ -41,7 +41,7 @@ public class SuppliesController implements IController<SuppliesModelDto>
         return ResponseEntity.ok(suppliesService.GetAllEntities());
     }
 
-    @PostMapping("/create")
+    @PostMapping("/")
     @Override
     public ResponseEntity<String> CreateEntity(@RequestBody(required = true)SuppliesModelDto model) 
     {
@@ -56,7 +56,7 @@ public class SuppliesController implements IController<SuppliesModelDto>
         return new ResponseEntity<String>(HttpStatus.CREATED);
     }
 
-    @PostMapping("/update")
+    @PostMapping("/")
     @Override
     public ResponseEntity<String> UpdateEntity(@RequestBody(required = true)SuppliesModelDto model) 
     {
@@ -79,7 +79,7 @@ public class SuppliesController implements IController<SuppliesModelDto>
         return ResponseEntity.ok("Supply model updated");
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     @Override
     public ResponseEntity<String> DeleteEntityById(@PathVariable("id")UUID id) 
     {

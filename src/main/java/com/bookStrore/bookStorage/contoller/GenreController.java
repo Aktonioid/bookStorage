@@ -50,7 +50,7 @@ public class GenreController implements IController<GenreModelDto>
     }
 
     @Override
-    @PostMapping("/create")
+    @PostMapping("/")
     public ResponseEntity<String> CreateEntity(@RequestBody(required = true) GenreModelDto model) 
     {
         if(model.getName() == null) // если не заполнено поле имени жанра
@@ -64,7 +64,7 @@ public class GenreController implements IController<GenreModelDto>
     }
 
     @Override
-    @PutMapping("/update")
+    @PutMapping("/")
     public ResponseEntity<String> UpdateEntity(@RequestBody(required = true) GenreModelDto model) 
     {
         if(genreService.GetEntitieById(model.getId())  == null)
@@ -78,7 +78,7 @@ public class GenreController implements IController<GenreModelDto>
     }
 
     @Override
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> DeleteEntityById(@PathVariable("id") UUID id) 
     {
 

@@ -91,9 +91,9 @@
 
   |Роут|Тип запроса|Описание|
   |----|----|----|
-  |/delete/{id} |delete| удаление по id|
-  |/create |create| на вход принимает две form-data: 1) "cover" - обложка книги 2) "book" - BookModelDto в json|
-  |/update |put| на вход принимает две form-data: 1) "cover" - обложка книги 2) "book" - BookModelDto в json|
+  |/{id} |delete| удаление по id|
+  |/ |create| на вход принимает две form-data: 1) "cover" - обложка книги 2) "book" - BookModelDto в json|
+  |/ |put| на вход принимает две form-data: 1) "cover" - обложка книги 2) "book" - BookModelDto в json|
   |/ |get| получение всех книг из бд|
   |/{id} |get| получение книги по id|
   |/genre/{genre_id} |get|получение всех книг в которых есть указаный жанр|
@@ -104,9 +104,9 @@
     
   |Роут|Тип запроса|Описание|
   |----|----|----|
-  |/delete/{id}|delete| удаление по id|
-  |/create|post|на вход принимает GenreDto|
-  |update|put|на вход принимает GenreDto|
+  |/{id}|delete| удаление по id|
+  |/|post|на вход принимает GenreDto|
+  |/|put|на вход принимает GenreDto|
   |/|get|просто получение всех жанров, которые лежат в бд|
   |/{id}|get|получение жанра по id|
 
@@ -115,9 +115,9 @@
   Роут supplies имеет след эндпоинты:
   |Роут|Тип запроса|Описание|
   |----|----|----| 
-  |/delete/{id}|delete| удаление по id|
-  |/create|post| на вход принимает SuppliesDto|
-  |update|put| на вход принимает SuppliesDto|
+  |/{id}|delete| удаление по id|
+  |/|post| на вход принимает SuppliesDto|
+  |/|put| на вход принимает SuppliesDto|
   |/|get|просто получение всех поставок, которые лежат в бд|
   |/{id}|get| получение поставки по id|
   |/arrived|put|Подтвержение что поставка пришла|
