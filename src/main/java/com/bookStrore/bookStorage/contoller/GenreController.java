@@ -60,7 +60,7 @@ public class GenreController implements IController<GenreModelDto>
 
         if(!genreService.CreateEntity(model)) return new ResponseEntity<String>(HttpStatus.INSUFFICIENT_STORAGE);
 
-        return ResponseEntity.ok("Genre was created successfuly");
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Override

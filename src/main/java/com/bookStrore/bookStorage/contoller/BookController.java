@@ -72,7 +72,8 @@ public class BookController
 
         if(!bookService.CreateEntity(model)) return new ResponseEntity<>(HttpStatus.INSUFFICIENT_STORAGE);// если при сохранении ошибка
 
-        return ResponseEntity.ok("Book model created");
+        return new ResponseEntity<>(HttpStatus.CREATED);
+        // return ResponseEntity.ok("Book model created");
     }
 
     @PutMapping("/update")

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +53,7 @@ public class SuppliesController implements IController<SuppliesModelDto>
             return ResponseEntity.badRequest().body("Body is incorrect");
         }
         if(!suppliesService.CreateEntity(model)) return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);//если при соохранении ошибка
-        return ResponseEntity.ok("Supply model created");
+        return new ResponseEntity<String>(HttpStatus.CREATED);
     }
 
     @PostMapping("/update")
