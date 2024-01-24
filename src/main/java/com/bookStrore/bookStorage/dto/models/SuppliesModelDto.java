@@ -23,8 +23,10 @@ public class SuppliesModelDto
     private String provider; // поставщик
 
     private Date expectedDeliveryDate;// дата в которую поставка ожидается
-
+    private Date realDeliveryDate;
     private boolean isArived;
+
+    
 
     public SuppliesModelDto(UUID id)
     {

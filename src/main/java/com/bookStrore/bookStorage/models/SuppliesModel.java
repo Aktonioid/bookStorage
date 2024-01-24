@@ -24,7 +24,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SuppliesModel 
 {
-    @Id
+    @Id // не GeneratedValue, так как генериться они будут при создании модели
     private UUID id;
 
     @OneToMany
@@ -37,8 +37,13 @@ public class SuppliesModel
     @Basic
     @Temporal(TemporalType.DATE)
     private Date expectedDeliveryDate;// дата в которую поставка ожидается
-    // можно добавить еще реальную дату поставки
+
+    @Basic
+    @Temporal(TemporalType.DATE)
+    @Column(name = "real_delivery_date")
+    private Date realDeliveryDate;//реальная дата поставки
     @Column(name = "is_delivery_arrived")
+    
     private boolean isArived;
 
     public SuppliesModel(){}

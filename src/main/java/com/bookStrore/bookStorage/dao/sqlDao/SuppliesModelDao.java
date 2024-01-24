@@ -6,6 +6,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.bookStrore.bookStorage.models.BookModel;
@@ -16,6 +17,7 @@ import com.bookStrore.bookStorage.models.SupplyPartModel;
 public class SuppliesModelDao extends SQLBaseDao<SuppliesModel>
 {   
 
+    @Autowired
     public SuppliesModelDao(SessionFactory sessionFactory) {
         super(sessionFactory, SuppliesModel.class);
         this.clazz = SuppliesModel.class;
@@ -90,17 +92,16 @@ public class SuppliesModelDao extends SQLBaseDao<SuppliesModel>
 
             for (SupplyPartModel book : model.getBooks()) // пробегаемся по всем книгам, что есть в модели поставки и добавляем у их 
             {
-                BookModel supplyBook = book.getBook();
+                BookModel supplyBook = book.getBook(); //модель книги из поставки
                 
-                
-                BookModel dbModel = session.get(BookModel.class, supplyBook.getId());
+                BookModel dbModel = session.get(BookModel.class, supplyBook.getId());// получение модели книги из бд
 
-                if(dbModel == null)
+                if(dbModel == null)// если такой книги в бд нет, то двигаемся дальше
                 {
                     continue;
                 }
 
-                dbModel.setLeftovers((short)(dbModel.getLeftovers() + supplyBook.getLeftovers()));
+                dbModel.setLeftovers((short)(dbModel.getLeftovers() + supplyBook.getLeftovers()));// в модель книги из бд устанавливаем колличество книг в остатке
 
                 session.merge(dbModel);                
             }
