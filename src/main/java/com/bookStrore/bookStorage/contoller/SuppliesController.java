@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.bookStrore.bookStorage.dto.models.SuppliesModelDto;
+import com.bookStrore.bookStorage.services.office.ExcelService;
 import com.bookStrore.bookStorage.services.supplies.SuppliesService;
 
 @Controller
@@ -26,6 +27,8 @@ public class SuppliesController implements IController<SuppliesModelDto>
 
     @Autowired
     SuppliesService suppliesService;
+    @Autowired
+    ExcelService excelService;
 
     @GetMapping("/{id}")
     @Override
@@ -52,11 +55,11 @@ public class SuppliesController implements IController<SuppliesModelDto>
         {
             return ResponseEntity.badRequest().body("Body is incorrect");
         }
-        if(!suppliesService.CreateEntity(model)) return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);//если при соохранении ошибка
+        if(!suppliesService.CreateEntity(model)) return new ResponseEntity<>(HttpStatus.INSUFFICIENT_STORAGE);//если при соохранении ошибка
         return new ResponseEntity<String>(HttpStatus.CREATED);
     }
 
-    @PostMapping("/")
+    @PutMapping("/")
     @Override
     public ResponseEntity<String> UpdateEntity(@RequestBody(required = true)SuppliesModelDto model) 
     {
@@ -75,7 +78,7 @@ public class SuppliesController implements IController<SuppliesModelDto>
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        if(!suppliesService.UpdateEntity(model)) return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);//если при соохранении ошибка
+        if(!suppliesService.UpdateEntity(model)) return new ResponseEntity<>(HttpStatus.INSUFFICIENT_STORAGE);//если при соохранении ошибка
         return ResponseEntity.ok("Supply model updated");
     }
 
@@ -89,7 +92,7 @@ public class SuppliesController implements IController<SuppliesModelDto>
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        if(!suppliesService.DeleteEntityById(id)) return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);//если при соохранении ошибка
+        if(!suppliesService.DeleteEntityById(id)) return new ResponseEntity<>(HttpStatus.INSUFFICIENT_STORAGE);//если при соохранении ошибка
         return ResponseEntity.ok("Supply model deleted");
     }
 
@@ -97,27 +100,30 @@ public class SuppliesController implements IController<SuppliesModelDto>
     // Поставка пришла 
     public ResponseEntity<String> SupplyArrived(@RequestBody SuppliesModelDto dto)
     {
-        
+        // проверка на то что такая модель поставки вообще существует
         if(suppliesService.GetEntitieById(dto.getId()) == null)
         {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        if(dto.getExpectedDeliveryDate().getTime() > new Date().getTime())
+        //Надо подумать нужна ли эта часть, мб сделать погрешность в один день
+        if(dto.getExpectedDeliveryDate().getTime() > new Date().getTime()) // проверка на то не должна ли поставка приходить позже
         {
             return ResponseEntity.badRequest().body("Delivery date is greater than current one");
         }
 
-        if(dto.isArived())
+        if(dto.isArived())// проверка на то пришла ли уже поставка
         {
             return ResponseEntity.badRequest().body("Delivery already delivered");
         }
 
+        
         boolean isDelivered = suppliesService.SupplyArrived(dto); // проверка на то сохранилась ли модель поставки и книг
 
         if(!isDelivered) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
-        return ResponseEntity.ok("Successuly delivered");
+        // в ответе кидаю куда сохранилась смета
+        return ResponseEntity.ok(excelService.SupplyExcelEstimate(dto));
     }
 
 }

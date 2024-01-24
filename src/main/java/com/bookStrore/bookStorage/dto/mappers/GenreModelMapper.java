@@ -7,13 +7,11 @@ public class GenreModelMapper
 {
     public static GenreModelDto AsDto(GenreModel model)
     {
-        GenreModelDto dto = new GenreModelDto(model.getId(), model.getName());
-        return dto;
+        return new GenreModelDto(model.getId(), model.getName());
     }    
  
     public static GenreModel AsEntity(GenreModelDto dto)
     {
-        GenreModel model = new GenreModel(dto.getId(), dto.getName());
-        return model;
+        return new GenreModel(dto.getId(), dto.getName());
     }
 }

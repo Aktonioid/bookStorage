@@ -15,20 +15,22 @@ public class SuppliesModelMapper
     {
         
         return new SuppliesModelDto(model.getId(), // присваиваем id поставки
-        new ArrayList<SupplyPartModelDto>(model.getBooks().stream().map(SupplyPartModelMapper::AsDto).collect(Collectors.toList())), 
-            // строчкой выше переводим модель части поставки в дто модели поставки
-            model.getProvider(), // присваиваем дтошке имя поставщика из модели
-            model.getExpectedDeliveryDate(), // дата поставки
-            model.isArived()); // поступила ли доставки или нет
+                                    new ArrayList<SupplyPartModelDto>(model.getBooks().stream().map(SupplyPartModelMapper::AsDto).collect(Collectors.toList())), 
+                                    // строчкой выше переводим модель части поставки в дто модели поставки
+                                    model.getProvider(), // присваиваем дтошке имя поставщика из модели
+                                    model.getExpectedDeliveryDate(), // ожидаемая дата поставки
+                                    model.getRealDeliveryDate(), // реальная дата поставки
+                                    model.isArived()); // поступила ли доставки или нет
     }
     
     public static SuppliesModel AsEntity(SuppliesModelDto dto)
     {
         return new SuppliesModel(dto.getId(), // перенос id
-            new HashSet<SupplyPartModel>(dto.getBooks().stream().map(SupplyPartModelMapper::AsEntity).collect(Collectors.toList())),
-            // строчкой выше переводим модель части поставки из дто в модель части поставки
-            dto.getProvider(), // вставляем провайдера
-            dto.getExpectedDeliveryDate(), // дата поставки
-            dto.isArived()); // поступила ли поставка
+                                new HashSet<SupplyPartModel>(dto.getBooks().stream().map(SupplyPartModelMapper::AsEntity).collect(Collectors.toList())),
+                                // строчкой выше переводим модель части поставки из дто в модель части поставки
+                                dto.getProvider(), // вставляем провайдера
+                                dto.getExpectedDeliveryDate(), // ожидаемая дата поставки
+                                dto.getRealDeliveryDate(), //реальная дата поставки
+                                dto.isArived()); // поступила ли поставка
     }
 }

@@ -9,16 +9,16 @@ public class SupplyPartModelMapper
     public static SupplyPartModelDto AsDto(SupplyPartModel model)
     {
         return new SupplyPartModelDto(model.getId(), // Получение модели часиь поставки
-            BookModelMapper.AsDto(model.getBook()), // получение 
-            model.getSupplyId().getId(), 
-            model.getBookCount());
+                                    BookModelMapper.AsDto(model.getBook()), 
+                                    model.getSupplyId().getId(), 
+                                    model.getBookCount());
     }    
 
     public static SupplyPartModel AsEntity(SupplyPartModelDto dto)
     {
         return new SupplyPartModel(dto.getId(),
-            BookModelMapper.AsEntity(dto.getBook()), 
-            new SuppliesModel(dto.getSupplyId()),
-            dto.getBookCount());
+                                    BookModelMapper.AsEntity(dto.getBook()), 
+                                        new SuppliesModel(dto.getSupplyId()),
+                                    dto.getBookCount());
     }
 }
