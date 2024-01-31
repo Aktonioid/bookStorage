@@ -20,7 +20,7 @@ public class OrderModelDto
     private String userFullName;
     private String deliveryAdress;
     private UUID userId;
-
+    private boolean paymentStatus;
 
     public OrderModelDto(){}
 

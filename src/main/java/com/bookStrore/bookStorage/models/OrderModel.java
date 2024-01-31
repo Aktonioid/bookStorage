@@ -45,7 +45,10 @@ public class OrderModel
                         // с моделями закаов, а так по идее не будет проблем
 
     @Column(name = "delivery_adress")
-    private String deliveryAdress;// адрес доставки
+    private String deliveryAdress;// адрес доставки\
+
+    @Column(name = "payment_status")
+    private boolean paymentStatus; // Оплачен ли заказ
 
     @Column(name = "user_id")
     private UUID userId; // id пользователя, чтоб потом было удобно искать заказы по магазину

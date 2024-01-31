@@ -17,6 +17,7 @@ public class OrderModelMapper
                             dto.getSendDate(),
                             dto.getUserFullName(),
                             dto.getDeliveryAdress(),
+                            dto.isPaymentStatus(),
                             dto.getUserId());
     }
 
@@ -29,6 +30,7 @@ public class OrderModelMapper
                                 model.getSendDate(),
                                 model.getUserFullName(),
                                 model.getDeliveryAdress(),
-                                model.getUserId());
+                                model.getUserId(),
+                                model.isPaymentStatus());
     }
 }
